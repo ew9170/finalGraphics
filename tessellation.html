@@ -1,0 +1,194 @@
+<html>
+<head>
+    <title>CSCI-510: Tessellation</title>
+    
+    <!-- vertex Shader -->
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        #version 300 es
+        in vec4 aVertexPosition;
+        in vec3 bary;
+        uniform mat4 finalMatrix;
+        out vec3 vbc;
+
+        void main()
+        {
+            gl_Position = finalMatrix * aVertexPosition;
+            vbc = bary;
+        }
+    </script>
+
+     <!-- fragment Shader -->
+     <script id="fragment-shader" type="x-shader/x-fragment">
+         #version 300 es
+         precision mediump float;
+         
+         in vec3 vbc;
+
+         // Color that is the result of this shader
+         out vec4 fragColor;
+
+         void main(void) {
+             
+           fragColor = vec4 (0.5, 0.5, 0.5, 1.0 );
+           // if on the edge, draw black, otherwsie, draw grey
+           if (vbc.x < 0.01 || vbc.y < 0.01 || vbc.z < 0.01) {
+             fragColor = vec4 (1.0, 1.0, 1.0, 1.0);
+           }
+         }
+     </script>
+     
+     <!-- include the shape creation functions -->
+    <script type="text/javascript" src="./cgIShape.js"></script>
+    
+    <!-- include the main tesselation functions -->
+    <script type="text/javascript" src="./tessMain.js"></script>
+
+    <!-- include glMatrix directory -->
+    <script src="gl-matrix.js"></script>
+    
+    <!-- keyboard functions -->
+    <script type="text/javascript">
+    
+    function gotKey (event) {
+        
+        var key = event.key;
+        
+        //  incremental rotation
+        if (key === 'q') {
+            console.log('q');
+            incrementUniformTranslationY(false);
+        }
+        if (key === 'e') {
+            console.log('e');
+            incrementUniformTranslationY(true);
+        }
+        if (key === 'a') {
+            console.log('a');
+            incrementUniformTranslationX(true);
+        }
+        if (key === 'd') {
+            console.log('d');
+            incrementUniformTranslationX(false);
+        }
+        if (key === 'w') {
+            console.log('w');
+            incrementUniformTranslationZ(false);
+        }
+        if (key === 's') {
+            console.log('s');
+            incrementUniformTranslationZ(true);
+        }
+        if (key === '+') {
+            console.log('+');
+            increaseSpeed(0.05);
+        }
+        if (key === '-') {
+            console.log('-');
+            increaseSpeed(-0.05);
+        }
+
+        if (key === 'r' || key ==='R') {
+            angles[0] = anglesReset[0];
+            angles[1] = anglesReset[1];
+            angles[2] = anglesReset[2];
+            resetUniformTranslation();
+        }
+
+        switch (event.key) {
+            case "ArrowLeft":
+                console.log('left arrow')
+                incrementUniformRotationY(true);
+                break;
+            case "ArrowRight":
+                console.log('right arrow')
+                incrementUniformRotationY(false);
+                break;
+            case "ArrowUp":
+                console.log('up arrow');
+                incrementUniformRotationX(false);
+                break;
+            case "ArrowDown":
+                console.log('down arrow')
+                incrementUniformRotationX(true);
+                break;
+            default:
+                break;
+        }
+
+        // reset
+
+        
+        // create a new shape and do a redo a draw
+        createNewShape();
+        draw();
+    }
+    
+    </script>
+
+  <script type="text/javascript">
+    // Call init once the webpage has loaded
+    window.onload = init;
+  </script>
+</head>
+
+<body>
+  <h1>CSCI-510: Tessellation</h1>
+  <table>
+      <tr>
+          <td><canvas id="webgl-canvas" width="500" height="500">
+            Your browser does not support the HTML5 canvas element.
+          </canvas></td>
+          
+          <td>
+              <h3>Controls</h3>
+              
+              <table border="1">
+              <tbody>
+              <tr>
+              <td>x, y, z</td>
+              <td>Rotate the current shape forward about the x, y, or z axis</td>
+              </tr>
+              <tr>
+              <td>X, Y, Z</td>
+              <td>Rotate the current shape backward about the x, y, or z axis</td>
+              </tr>
+              <tr>
+              <td>1, c</td>
+              <td>Select the cube as the current shape (using current tessellation settings)</td>
+              </tr>
+              <tr>
+              <td>2, C</td>
+              <td>Select the cylinder as the current shape (using current tessellation settings)</td>
+              </tr>
+              <tr>
+              <td>3, n</td>
+              <td>Select the cone as the current shape (using current tessellation settings)</td>
+              </tr>
+              <tr>
+              <td>4, s</td>
+              <td>Select the sphere as the current shape (using current tessellation settings)</td>
+              </tr>
+              <tr>
+              <td>+, -</td>
+              <td>Increment/decrement the primary subdivision of the current shape by 1</td>
+              </tr>
+              <tr>
+              <td>=, _</td>
+              <td>Increment/decrement the secondary subdivision of the current shape by 1</td>
+              </tr>
+              <tr>
+              <td>r, R</td>
+              <td>Reset the figure to its original orientation</td>
+              </tr>
+              </tbody>
+              </table>
+              
+          </td>
+      </tr>
+  </table>
+  
+  
+
+</body>
+</html>
+
