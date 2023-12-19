@@ -35,6 +35,30 @@ function makeCube (subdivisions)  {
     subdivideQuad(pb2, pb1, p2, p1, subdivisions);
 }
 
+function makeInvertedCube (subdivisions) {
+    let p1 = [-50, -50, 50];
+    let p2 = [50, -50, 50];
+    let p3 = [50, 50, 50];
+    let p4 = [-50, 50, 50];
+
+    let pb1 = [50, -50, -50];
+    let pb2 = [-50, -50, -50];
+    let pb3 = [-50, 50, -50];
+    let pb4 = [50, 50, -50];
+
+    // initial front face
+    subdivideQuad(p1, p2, p3, p4, subdivisions);
+
+    // initial back face
+    subdivideQuad(pb1, pb2, pb3, pb4, subdivisions);
+
+    // initial left face
+    subdivideQuad(pb2, p1, p4, pb3, subdivisions);
+
+    // initial right face
+    subdivideQuad(p2, pb1, pb4, p3, subdivisions);
+}
+
 function subdivideQuad(p1, p2, p3, p4, subdivisions) {
     if (subdivisions === 1) {
         drawQuadrilateral(p1, p2, p3, p4);
@@ -67,8 +91,21 @@ function drawQuadrilateral(p1, p2, p3, p4) {
     // bottom left triangle
     addTriangle(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], p3[0], p3[1], p3[2]);
 
+    uvs.push(0.0);
+    uvs.push(0.0);
+    uvs.push(1.0);
+    uvs.push(0.0);
+    uvs.push(1.0);
+    uvs.push(1.0);
+
     // top right triangle
     addTriangle(p1[0], p1[1], p1[2], p3[0], p3[1], p3[2], p4[0], p4[1], p4[2]);
+    uvs.push(0.0);
+    uvs.push(0.0);
+    uvs.push(1.0);
+    uvs.push(1.0);
+    uvs.push(0.0);
+    uvs.push(1.0);
 }
 
 
@@ -84,31 +121,29 @@ function radians(degrees)
   return degrees * (pi/180);
 }
 
-function addTriangle (x0,y0,z0,x1,y1,z1,x2,y2,z2) {
-
-    
+function addTriangle(x0, y0, z0, x1, y1, z1, x2, y2, z2) {
     var nverts = points.length / 4;
-    
+
     // push first vertex
-    points.push(x0);  bary.push (1.0);
-    points.push(y0);  bary.push (0.0);
-    points.push(z0);  bary.push (0.0);
+    points.push(x0);
+    points.push(y0);
+    points.push(z0);
     points.push(1.0);
     indices.push(nverts);
     nverts++;
-    
+
     // push second vertex
-    points.push(x1); bary.push (0.0);
-    points.push(y1); bary.push (1.0);
-    points.push(z1); bary.push (0.0);
+    points.push(x1);
+    points.push(y1);
+    points.push(z1);
     points.push(1.0);
     indices.push(nverts);
     nverts++
-    
+
     // push third vertex
-    points.push(x2); bary.push (0.0);
-    points.push(y2); bary.push (0.0);
-    points.push(z2); bary.push (1.0);
+    points.push(x2);
+    points.push(y2);
+    points.push(z2);
     points.push(1.0);
     indices.push(nverts);
     nverts++;
